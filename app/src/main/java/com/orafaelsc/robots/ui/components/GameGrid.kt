@@ -4,7 +4,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import com.orafaelsc.robots.GameData
 
 @Composable
@@ -17,14 +16,7 @@ fun GameGrid(gameData: GameData) {
         content = {
             items(rows * columns) { index ->
 
-                val elementData = gameData.getElementData(index)
-
-                val backgroundColor =
-                    if (index == elementData.index) {
-                        elementData.backgroundColor
-                    } else {
-                        Color(0xFFDEDEDE)
-                    }
+                val backgroundColor = gameData.getBackgroundColorForSpot(index)
                 GridElement(backgroundColor)
             }
         },

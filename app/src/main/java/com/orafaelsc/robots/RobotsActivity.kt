@@ -26,6 +26,7 @@ class RobotsActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             var gameData by remember {
                 mutableStateOf(GameData.newGame())

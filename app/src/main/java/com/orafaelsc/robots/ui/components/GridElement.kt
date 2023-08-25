@@ -18,7 +18,6 @@ fun GridElement(backgroundColor: Color) {
             modifier = Modifier
                 .size(40.dp)
                 .background(backgroundColor, shape = RoundedCornerShape(28.dp)),
-
         )
     }
 }
