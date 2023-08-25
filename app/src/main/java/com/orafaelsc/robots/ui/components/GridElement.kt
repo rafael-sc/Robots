@@ -12,12 +12,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun GridElement() {
-    Box(modifier = Modifier.padding(8.dp)) {
+fun GridElement(backgroundColor: Color) {
+    Box(modifier = Modifier.padding(2.dp)) {
         Box(
             modifier = Modifier
                 .size(40.dp)
-                .background(Color(0xFFDEDEDE), shape = RoundedCornerShape(28.dp)),
+                .background(backgroundColor, shape = RoundedCornerShape(28.dp)),
 
         )
     }
@@ -26,5 +26,5 @@ fun GridElement() {
 @Preview(showBackground = true)
 @Composable
 fun GridElementPreview() {
-    GridElement()
+    GridElement(Color(0xFFDEDEDE))
 }
