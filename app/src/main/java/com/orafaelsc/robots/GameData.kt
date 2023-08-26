@@ -8,7 +8,7 @@ import kotlin.random.Random
 data class GameData(
     val firstPlayerSpots: MutableList<Int>,
     val secondPlayerSpots: MutableList<Int>,
-    var goalSpot: Int = 0,
+    val goalSpot: Int = 0,
 ) {
     private val lines = 7
     private val columns = 7
