@@ -22,9 +22,13 @@ class RobotsViewModel(
 
     private val _firstPlayerSpots = MutableStateFlow<MutableList<Int>>(mutableStateListOf(6))
     val firstPlayerSpots: StateFlow<MutableList<Int>> = _firstPlayerSpots
+    private val _firstPlayerWins = MutableStateFlow<Int>(0)
+    val firstPlayerWins: StateFlow<Int> = _firstPlayerWins
 
     private val _secondPlayerSpots = MutableStateFlow<MutableList<Int>>(mutableStateListOf(42))
     val secondPlayerSpots: StateFlow<MutableList<Int>> = _secondPlayerSpots
+    private val _secondPlayerWins = MutableStateFlow<Int>(0)
+    val secondPlayerWins: StateFlow<Int> = _secondPlayerWins
 
 
     suspend fun goAuto() {
@@ -37,10 +41,8 @@ class RobotsViewModel(
     }
 
     fun newRound() {
-
         firstPlayerMove()
         secondPlayerMove()
-
     }
 
     private var firstPlayerCanMove: Boolean = true
@@ -51,11 +53,11 @@ class RobotsViewModel(
             val nextSpotPlayer1 =
                 validSpotsCase.getValidSpots(_firstPlayerSpots.value, _secondPlayerSpots.value)
             _firstPlayerSpots.value.add(nextSpotPlayer1)
-            viewModelScope.launch {
-                _firstPlayerSpots.emit(firstPlayerSpots.value)
-            }
+            viewModelScope.launch { _firstPlayerSpots.emit(firstPlayerSpots.value) }
 
             if (nextSpotPlayer1 == goalSpot.value) {
+                viewModelScope.launch { _firstPlayerWins.emit(_firstPlayerWins.value + 1) }
+
                 if (isAuto)
                     newGame()
                 Log.d("ROBOTS!", "player 1 wins!")
@@ -68,17 +70,13 @@ class RobotsViewModel(
 
     private fun secondPlayerMove() {
         try {
-
             val nextSpotPlayer2 =
                 validSpotsCase.getValidSpots(secondPlayerSpots.value, firstPlayerSpots.value)
-
             _secondPlayerSpots.value.add(nextSpotPlayer2)
 
-            viewModelScope.launch {
-                _secondPlayerSpots.emit(secondPlayerSpots.value)
-            }
+            viewModelScope.launch { _secondPlayerSpots.emit(secondPlayerSpots.value) }
             if (nextSpotPlayer2 == goalSpot.value) {
-
+                viewModelScope.launch { _secondPlayerWins.emit(_secondPlayerWins.value + 1) }
                 if (isAuto)
                     newGame()
             }

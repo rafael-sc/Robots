@@ -22,7 +22,7 @@ import com.orafaelsc.robots.ui.theme.RobotsTheme
 
 class RobotsActivity : ComponentActivity() {
 
-    val viewModel by viewModels<RobotsViewModel>()
+    private val viewModel by viewModels<RobotsViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,7 +66,9 @@ class RobotsActivity : ComponentActivity() {
 
         val gameData = GameData(
             firstPlayerSpots = viewModel.firstPlayerSpots.collectAsState().value,
+            firstPlayerWins = viewModel.firstPlayerWins.collectAsState().value.toString(),
             secondPlayerSpots = viewModel.secondPlayerSpots.collectAsState().value,
+            secondPlayerWins = viewModel.secondPlayerWins.collectAsState().value.toString(),
             goalSpot = viewModel.goalSpot.collectAsState().value,
         )
         GameGrid(gameData) {
