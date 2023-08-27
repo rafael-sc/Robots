@@ -3,6 +3,7 @@ package com.orafaelsc.robots
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,26 +12,22 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.orafaelsc.robots.GameData.Companion.newRound
 import com.orafaelsc.robots.ui.components.GameGrid
 import com.orafaelsc.robots.ui.theme.RobotsTheme
 
 class RobotsActivity : ComponentActivity() {
 
+    val viewModel by viewModels<RobotsViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
-            var gameData by remember {
-                mutableStateOf(GameData.newGame())
-            }
             RobotsTheme {
                 Surface(
                     modifier = Modifier,
@@ -44,15 +41,36 @@ class RobotsActivity : ComponentActivity() {
                         Button(
                             modifier = Modifier.padding(40.dp),
                             onClick = {
-                                gameData = gameData.newRound()
+                                viewModel.toggleAutoMode()
+                            },
+                        ) {
+                            Text(text = "Auto Mode")
+                        }
+                        Button(
+                            modifier = Modifier.padding(40.dp),
+                            onClick = {
+                                viewModel.newRound()
                             },
                         ) {
                             Text(text = "New Round")
                         }
-                        GameGrid(gameData)
+                        CreateGameGrid(viewModel = viewModel)
                     }
                 }
             }
+        }
+    }
+
+    @Composable
+    private fun CreateGameGrid(viewModel: RobotsViewModel) {
+
+        val gameData = GameData(
+            firstPlayerSpots = viewModel.firstPlayerSpots.collectAsState().value,
+            secondPlayerSpots = viewModel.secondPlayerSpots.collectAsState().value,
+            goalSpot = viewModel.goalSpot.collectAsState().value,
+        )
+        GameGrid(gameData) {
+            viewModel.newGame()
         }
     }
 }

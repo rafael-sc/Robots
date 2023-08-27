@@ -1,20 +1,21 @@
 package com.orafaelsc.robots
 
 import android.util.Log
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.orafaelsc.robots.extensions.randomItem
-import kotlinx.coroutines.flow.MutableSharedFlow
+import com.orafaelsc.robots.domain.ValidSpotsCase
+import com.orafaelsc.robots.exceptions.NoMoreMovesException
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
-class RobotsViewModel : ViewModel() {
+class RobotsViewModel(
+    private val validSpotsCase: ValidSpotsCase = ValidSpotsCase(),
+) : ViewModel() {
+    var isAuto = false
+        private set
 
     private val _goalSpot = MutableStateFlow<Int>(getAvailableSpotForGoal())
     val goalSpot: StateFlow<Int> = _goalSpot
@@ -26,91 +27,77 @@ class RobotsViewModel : ViewModel() {
     val secondPlayerSpots: StateFlow<MutableList<Int>> = _secondPlayerSpots
 
 
-    private val lines = 7
-    private val columns = 7
+    suspend fun goAuto() {
+        while (isAuto) {
+            firstPlayerMove()
+            delay(500)
+            secondPlayerMove()
+            delay(500)
+        }
+    }
 
     fun newRound() {
 
-        val nextSpotPlayer1 =
-            getValidSpots(_firstPlayerSpots.value, _secondPlayerSpots.value).randomItem()
-        if (nextSpotPlayer1 == null) {
-            Log.d("ROBOTS!", "no more moves available for player 1")
-        } else {
+        firstPlayerMove()
+        secondPlayerMove()
+
+    }
+
+    private var firstPlayerCanMove: Boolean = true
+    private var secondPlayerCanMove: Boolean = true
+
+    private fun firstPlayerMove() {
+        try {
+            val nextSpotPlayer1 =
+                validSpotsCase.getValidSpots(_firstPlayerSpots.value, _secondPlayerSpots.value)
+            _firstPlayerSpots.value.add(nextSpotPlayer1)
+            viewModelScope.launch {
+                _firstPlayerSpots.emit(firstPlayerSpots.value)
+            }
+
             if (nextSpotPlayer1 == goalSpot.value) {
+                if (isAuto)
+                    newGame()
                 Log.d("ROBOTS!", "player 1 wins!")
             }
-            _firstPlayerSpots.value.add(nextSpotPlayer1)
+        } catch (e: NoMoreMovesException) {
+            firstPlayerCanMove = false
+            Log.d("ROBOTS!", "No more moves available")
         }
+    }
 
-        val nextSpotPlayer2 =
-            getValidSpots(secondPlayerSpots.value, firstPlayerSpots.value).randomItem()
-        if (nextSpotPlayer2 == null) {
-            Log.d("ROBOTS!", "no more moves available for player 2")
-        } else {
-            if (nextSpotPlayer2 == goalSpot.value) {
-                Log.d("ROBOTS!", "player 2 wins!")
-            }
+    private fun secondPlayerMove() {
+        try {
+
+            val nextSpotPlayer2 =
+                validSpotsCase.getValidSpots(secondPlayerSpots.value, firstPlayerSpots.value)
+
             _secondPlayerSpots.value.add(nextSpotPlayer2)
-        }
 
-        viewModelScope.launch {
-            _firstPlayerSpots.emit(firstPlayerSpots.value)
-            _secondPlayerSpots.emit(secondPlayerSpots.value)
+            viewModelScope.launch {
+                _secondPlayerSpots.emit(secondPlayerSpots.value)
+            }
+            if (nextSpotPlayer2 == goalSpot.value) {
+
+                if (isAuto)
+                    newGame()
+            }
+        } catch (e: NoMoreMovesException) {
+            secondPlayerCanMove = false
+            Log.d("ROBOTS!", "No more moves available")
         }
     }
 
-    private fun getValidSpots(
-        playerUsedSpots: MutableList<Int>,
-        opponentUsedSpots: MutableList<Int>,
-    ): List<Int> {
-        val lastSpot = playerUsedSpots.last()
-
-        val actualLine = lastSpot / columns
-        val actualColumn = lastSpot % columns
-        val validSpots = mutableListOf<Int>()
-
-        // check if exists a spot above
-        if (actualLine > 0) {
-            validSpots.add(lastSpot - lines)
-        }
-        // check if exists a spot under
-        if (actualLine < lines - 1) {
-            validSpots.add(lastSpot + lines)
-        }
-
-        // check if exists spot at left
-        if (actualColumn > 0) {
-            validSpots.add(lastSpot - 1)
-        }
-
-        // check if exists spot at right
-        if (actualColumn < columns - 1) {
-            validSpots.add(lastSpot + 1)
-        }
-
-        // remove used valid spots
-        playerUsedSpots.forEach {
-            if (validSpots.contains(it)) {
-                validSpots.remove(it)
-            }
-        }
-        opponentUsedSpots.forEach {
-            if (validSpots.contains(it)) {
-                validSpots.remove(it)
-            }
-        }
-
-        validSpots.remove(lastSpot)
-        Log.d("ROBOTS!", "Valid spots for index:$lastSpot = $validSpots")
-        return validSpots
-    }
 
     fun newGame() {
+        firstPlayerCanMove = true
+        secondPlayerCanMove = true
         viewModelScope.launch {
-            _firstPlayerSpots.emit( mutableListOf())
-            _firstPlayerSpots.emit( mutableListOf(6))
-            _secondPlayerSpots.emit( mutableListOf())
-            _secondPlayerSpots.emit( mutableListOf(42))
+
+            _firstPlayerSpots.emit(mutableListOf())
+            _firstPlayerSpots.emit(mutableListOf(6))
+            _secondPlayerSpots.emit(mutableListOf())
+            _secondPlayerSpots.emit(mutableListOf(42))
             _goalSpot.emit(getAvailableSpotForGoal())
         }
     }
@@ -118,5 +105,11 @@ class RobotsViewModel : ViewModel() {
     private fun getAvailableSpotForGoal(): Int =
         (0 until 50).filter { it != 6 && it != 42 }.shuffled().first()
 
+    fun toggleAutoMode() {
+        isAuto = !isAuto
+        viewModelScope.launch {
+            goAuto()
+        }
+    }
 
 }
