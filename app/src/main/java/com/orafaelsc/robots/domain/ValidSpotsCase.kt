@@ -6,8 +6,8 @@ import com.orafaelsc.robots.extensions.randomItem
 
 class ValidSpotsCase {
 
-    private val lines = 7
-    private val columns = 7
+    private val lines = LINES
+    private val columns = COLUMNS
 
     fun getValidSpots(
         playerUsedSpots: MutableList<Int>,

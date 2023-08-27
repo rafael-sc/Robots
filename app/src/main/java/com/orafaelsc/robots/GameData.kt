@@ -1,7 +1,12 @@
 package com.orafaelsc.robots
 
 import androidx.compose.ui.graphics.Color
-
+import com.orafaelsc.robots.domain.BACKGROUND_COLOR
+import com.orafaelsc.robots.domain.FIRST_PLAYER_BRIGHT_COLOR
+import com.orafaelsc.robots.domain.FIRST_PLAYER_COLOR
+import com.orafaelsc.robots.domain.GOAL_COLOR
+import com.orafaelsc.robots.domain.SECOND_PLAYER_BRIGHT_COLOR
+import com.orafaelsc.robots.domain.SECOND_PLAYER_COLOR
 
 data class GameData(
     val firstPlayerSpots: MutableList<Int>,
@@ -11,9 +16,11 @@ data class GameData(
     val goalSpot: Int = 0,
 ) {
     fun getBackgroundColorForSpot(spot: Int): Color = when {
-        firstPlayerSpots.contains(spot) -> Color(0xFFE91E63)
-        secondPlayerSpots.contains(spot) -> Color(0xFF2C4CFF)
-        goalSpot == spot -> Color(0xFFFFEB3B)
-        else -> Color(0xFFDEDEDE)
+        firstPlayerSpots.last() == spot -> FIRST_PLAYER_BRIGHT_COLOR
+        firstPlayerSpots.contains(spot) -> FIRST_PLAYER_COLOR
+        secondPlayerSpots.last() == spot -> SECOND_PLAYER_BRIGHT_COLOR
+        secondPlayerSpots.contains(spot) -> SECOND_PLAYER_COLOR
+        goalSpot == spot -> GOAL_COLOR
+        else -> BACKGROUND_COLOR
     }
 }

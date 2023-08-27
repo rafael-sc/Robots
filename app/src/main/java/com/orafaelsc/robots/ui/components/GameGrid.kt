@@ -1,6 +1,5 @@
 package com.orafaelsc.robots.ui.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,16 +16,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.orafaelsc.robots.GameData
+import com.orafaelsc.robots.domain.COLUMNS
+import com.orafaelsc.robots.domain.FIRST_PLAYER_COLOR
+import com.orafaelsc.robots.domain.LINES
+import com.orafaelsc.robots.domain.SECOND_PLAYER_COLOR
 
 @Composable
 fun GameGrid(gameData: GameData?, onNewGame: () -> Unit) {
 
-    val rows = 7
-    val columns = 7
     if (gameData == null) {
         Button(onClick = onNewGame) {
             Text(text = "New game")
@@ -40,13 +40,32 @@ fun GameGrid(gameData: GameData?, onNewGame: () -> Unit) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(modifier = Modifier.background(Color.Black).size(80.dp)) {
-                    val p1Color = Color(0xFFE91E63)
+
+                Spacer(modifier = Modifier.weight(1f))
+                Box(modifier = Modifier.size(60.dp)) {
+
+                    Text(
+                        modifier = Modifier
+                            .padding(start = 8.dp)
+                            .align(Alignment.CenterStart),
+                        text = gameData.secondPlayerWins,
+                        fontSize = 16.sp,
+                        color = SECOND_PLAYER_COLOR
+                    )
+                    GridElement(
+                        modifier = Modifier
+                            .padding(start = 8.dp)
+                            .align(Alignment.CenterEnd),
+                        backgroundColor = SECOND_PLAYER_COLOR
+                    )
+                }
+
+                Box(modifier = Modifier.size(60.dp)) {
                     GridElement(
                         modifier = Modifier
                             .padding(start = 8.dp)
                             .align(Alignment.CenterStart),
-                        backgroundColor = p1Color
+                        backgroundColor = FIRST_PLAYER_COLOR
                     )
                     Text(
                         modifier = Modifier
@@ -54,35 +73,17 @@ fun GameGrid(gameData: GameData?, onNewGame: () -> Unit) {
                             .align(Alignment.CenterEnd),
                         text = gameData.firstPlayerWins,
                         fontSize = 16.sp,
-                        color = p1Color
+                        color = FIRST_PLAYER_COLOR
                     )
                 }
-
                 Spacer(modifier = Modifier.weight(1f))
-                Box(modifier = Modifier.background(Color.Black).size(80.dp)) {
-                    val p2Color = Color(0xFF2C4CFF)
-                    Text(
-                        modifier = Modifier
-                            .padding(start = 8.dp)
-                            .align(Alignment.CenterStart),
-                        text = gameData.secondPlayerWins,
-                        fontSize = 16.sp,
-                        color = p2Color
-                    )
-                    GridElement(
-                        modifier = Modifier
-                            .padding(start = 8.dp)
-                            .align(Alignment.CenterEnd),
-                        backgroundColor = p2Color
-                    )
-                }
             }
 
             LazyVerticalGrid(
-                columns = GridCells.Fixed(columns),
-                modifier = Modifier,
+                modifier = Modifier.padding(start = 60.dp, end = 60.dp, top = 8.dp, bottom = 8.dp),
+                columns = GridCells.Fixed(COLUMNS),
                 content = {
-                    items(rows * columns) { index ->
+                    items(LINES * COLUMNS) { index ->
                         val backgroundColor = gameData.getBackgroundColorForSpot(index)
                         GridElement(modifier = Modifier.padding(2.dp), backgroundColor)
                     }

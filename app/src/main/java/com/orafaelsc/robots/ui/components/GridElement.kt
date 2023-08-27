@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -20,7 +19,7 @@ fun GridElement(
     Box(modifier = modifier) {
         Box(
             modifier = Modifier
-                .size(40.dp)
+                .size(20.dp)
                 .background(backgroundColor, shape = RoundedCornerShape(28.dp)),
         )
     }

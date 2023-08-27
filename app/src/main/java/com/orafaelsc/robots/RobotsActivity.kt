@@ -1,6 +1,7 @@
 package com.orafaelsc.robots
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -14,6 +15,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -31,7 +33,7 @@ class RobotsActivity : ComponentActivity() {
             RobotsTheme {
                 Surface(
                     modifier = Modifier,
-                    color = MaterialTheme.colorScheme.background,
+                    color = MaterialTheme.colorScheme.onBackground,
                 ) {
                     Column(
                         modifier = Modifier.fillMaxSize(),
@@ -46,14 +48,6 @@ class RobotsActivity : ComponentActivity() {
                         ) {
                             Text(text = "Auto Mode")
                         }
-                        Button(
-                            modifier = Modifier.padding(40.dp),
-                            onClick = {
-                                viewModel.newRound()
-                            },
-                        ) {
-                            Text(text = "New Round")
-                        }
                         CreateGameGrid(viewModel = viewModel)
                     }
                 }
@@ -63,14 +57,8 @@ class RobotsActivity : ComponentActivity() {
 
     @Composable
     private fun CreateGameGrid(viewModel: RobotsViewModel) {
-
-        val gameData = GameData(
-            firstPlayerSpots = viewModel.firstPlayerSpots.collectAsState().value,
-            firstPlayerWins = viewModel.firstPlayerWins.collectAsState().value.toString(),
-            secondPlayerSpots = viewModel.secondPlayerSpots.collectAsState().value,
-            secondPlayerWins = viewModel.secondPlayerWins.collectAsState().value.toString(),
-            goalSpot = viewModel.goalSpot.collectAsState().value,
-        )
+        val gameData by viewModel.gameData.collectAsState(null)
+        Log.d("ROBOTS!", "gameData: $gameData")
         GameGrid(gameData) {
             viewModel.newGame()
         }
