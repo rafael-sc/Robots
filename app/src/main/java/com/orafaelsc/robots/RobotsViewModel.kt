@@ -37,13 +37,11 @@ class RobotsViewModel(
     private suspend fun goAuto() {
         while (isAuto) {
             playerMove(firstPlayerSpots, secondPlayerSpots, true)
-            delay(20)
             playerMove(secondPlayerSpots, firstPlayerSpots, false)
-            delay(20)
         }
     }
 
-    private fun playerMove(
+    private suspend fun playerMove(
         playerSpots: MutableList<Int>,
         opponentSpots: MutableList<Int>,
         isFirstPlayer: Boolean
@@ -77,6 +75,7 @@ class RobotsViewModel(
             Log.d("ROBOTS!", "No more moves available for player ${if (isFirstPlayer) 1 else 2}")
             checkIfGameIsOver()
         }
+        delay(500)
     }
 
 
