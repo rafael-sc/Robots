@@ -120,7 +120,7 @@ class RobotsViewModel(
     fun toggleAutoMode() {
         isAuto = !isAuto
         viewModelScope.launch {
-            if (isAuto) {
+            if (!isAuto) {
                 buttonText.emit("Start Game")
             } else {
                 buttonText.emit("Stop")
