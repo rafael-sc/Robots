@@ -13,6 +13,7 @@ import com.orafaelsc.robots.domain.INITIAL_SPOT
 import com.orafaelsc.robots.exceptions.NoMoreMovesException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 
 import kotlinx.coroutines.launch
 
@@ -22,6 +23,7 @@ class RobotsViewModel(
 
     private var isAuto = false
     val gameData = MutableSharedFlow<GameData?>(1)
+    val buttonText = MutableStateFlow<String>("Start Game")
     private var goalSpot: Int = getAvailableSpotForGoal()
     private val firstPlayerSpots: MutableList<Int> = mutableStateListOf(FIRST_PLAYER_START_SPOT)
     private var firstPlayerWins = 0
@@ -118,6 +120,11 @@ class RobotsViewModel(
     fun toggleAutoMode() {
         isAuto = !isAuto
         viewModelScope.launch {
+            if (isAuto) {
+                buttonText.emit("Start Game")
+            } else {
+                buttonText.emit("Stop")
+            }
             goAuto()
         }
     }

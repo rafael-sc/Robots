@@ -46,13 +46,19 @@ class RobotsActivity : ComponentActivity() {
                                 viewModel.toggleAutoMode()
                             },
                         ) {
-                            Text(text = "Auto Mode")
+                            MainText()
                         }
                         CreateGameGrid(viewModel = viewModel)
                     }
                 }
             }
         }
+    }
+
+    @Composable
+    private fun MainText() {
+        val buttonText by viewModel.buttonText.collectAsState("")
+        Text(text = buttonText)
     }
 
     @Composable
