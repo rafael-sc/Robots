@@ -32,4 +32,4 @@
 2. **Clone the Repository:** Clone this repository to your local machine.
 
    ```shell
-   git clone git@github.com:rafael-sc/Robots.gitt
+   git clone git@github.com:rafael-sc/Robots.git
