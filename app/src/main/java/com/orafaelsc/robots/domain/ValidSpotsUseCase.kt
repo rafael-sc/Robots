@@ -1,13 +1,12 @@
 package com.orafaelsc.robots.domain
 
-import android.util.Log
 import com.orafaelsc.robots.exceptions.NoMoreMovesException
 import com.orafaelsc.robots.extensions.randomItem
 
-class ValidSpotsCase {
+class ValidSpotsUseCase {
 
-    private val lines = LINES
-    private val columns = COLUMNS
+    private val lines = 7
+    private val columns = 7
 
     fun getValidSpots(
         playerUsedSpots: MutableList<Int>,
@@ -51,7 +50,6 @@ class ValidSpotsCase {
         }
 
         validSpots.remove(lastSpot)
-        Log.d("ROBOTS!", "Valid spots for index:$lastSpot = $validSpots")
         return validSpots.randomItem() ?: throw NoMoreMovesException()
     }
 }

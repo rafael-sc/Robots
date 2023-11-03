@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.orafaelsc.robots.domain.ValidSpotsCase
+import com.orafaelsc.robots.domain.ValidSpotsUseCase
 import com.orafaelsc.robots.domain.COLUMNS
 import com.orafaelsc.robots.domain.FIRST_PLAYER_START_SPOT
 import com.orafaelsc.robots.domain.LINES
@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 class RobotsViewModel(
-    private val validSpotsCase: ValidSpotsCase = ValidSpotsCase(),
+    private val validSpotsUseCase: ValidSpotsUseCase = ValidSpotsUseCase(),
 ) : ViewModel() {
 
     private var isAuto = false
@@ -49,7 +49,7 @@ class RobotsViewModel(
         isFirstPlayer: Boolean
     ) {
         try {
-            val nextSpot = validSpotsCase.getValidSpots(playerSpots, opponentSpots)
+            val nextSpot = validSpotsUseCase.getValidSpots(playerSpots, opponentSpots)
             playerSpots.add(nextSpot)
 
             if (nextSpot == goalSpot) {
