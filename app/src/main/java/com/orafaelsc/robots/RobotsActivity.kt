@@ -1,5 +1,6 @@
 package com.orafaelsc.robots
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -19,6 +20,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.google.android.play.core.appupdate.AppUpdateInfo
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.UpdateAvailability
 import com.orafaelsc.robots.ui.components.GameGrid
 import com.orafaelsc.robots.ui.theme.RobotsTheme
 
@@ -53,6 +59,63 @@ class RobotsActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+
+        applicationContext?.let {
+            verifyAppUpdate(it)
+        }
+    }
+
+    private fun verifyAppUpdate(context: Context) {
+//        val appUpdateManager = com.google.android.play.core.appupdate.AppUpdateManagerFactory.create(context)
+//        val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+//        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+//            if (appUpdateInfo.updateAvailability() == com.google.android.play.core.install.model.UpdateAvailability.UPDATE_AVAILABLE
+//                && appUpdateInfo.isUpdateTypeAllowed(com.google.android.play.core.install.model.AppUpdateType.IMMEDIATE)
+//            ) {
+//                appUpdateManager.startUpdateFlowForResult(
+//                    appUpdateInfo,
+//                    com.google.android.play.core.install.model.AppUpdateType.IMMEDIATE,
+//                    this,
+//                    1,
+//                )`
+//            }
+//        }
+
+        val appUpdateManager = AppUpdateManagerFactory.create(context)
+        val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+
+            if (appUpdateInfo != null)
+                when (appUpdateInfo.updateAvailability()) {
+                    UpdateAvailability.UPDATE_AVAILABLE -> {
+                        Log.d("ROBOTS!", "UPDATE_AVAILABLE")
+                    }
+
+                    UpdateAvailability.UPDATE_NOT_AVAILABLE -> {
+                        requestAppUpdate(appUpdateInfo, appUpdateManager)
+                    }
+
+                    UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS -> {
+                        Log.d("ROBOTS!", "DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS")
+                    }
+
+                    UpdateAvailability.UNKNOWN -> {
+                        Log.d("ROBOTS!", "UNKNOWN")
+                    }
+                }
+        }
+    }
+
+    private fun requestAppUpdate(
+        appUpdateInfo: AppUpdateInfo,
+        appUpdateManager: AppUpdateManager
+    ) {
+        TODO("Not yet implemented")
     }
 
     @Composable

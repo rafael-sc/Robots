@@ -2,6 +2,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.googleServices)
 }
 
 android {
@@ -9,28 +10,34 @@ android {
     compileSdk = 34
 
     defaultConfig {
+
+        val versionMajor = 1
+        val versionMinor = 0
+        val versionPatch = 0
         applicationId = "com.orafaelsc.robots"
         minSdk = 28
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = calculateVersionCode(versionMajor, versionMinor, versionPatch)
+        versionName = buildVersionName(versionMajor, versionMinor, versionPatch)
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
-
-
-
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isDebuggable = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+        }
+        debug {
+            isMinifyEnabled = false
+            isDebuggable = true
         }
     }
     compileOptions {
@@ -58,6 +65,11 @@ android {
 
 dependencies {
 
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.analytics.ktx)
+    implementation(libs.google.play.app.update)
+    implementation(libs.google.play.app.update.ktx)
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)
     implementation(libs.activity.compose)
@@ -74,4 +86,15 @@ dependencies {
     androidTestImplementation(libs.ui.test.junit4)
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
+}
+
+fun calculateVersionCode(versionMajor: Int, versionMinor: Int, versionPatch: Int): Int {
+    return versionMajor * 1000000 + versionMinor * 10000 + versionPatch * 100
+}
+
+fun buildVersionName(versionMajor: Int, versionMinor: Int, versionPatch: Int): String {
+    return if (versionPatch == 0)
+        "$versionMajor.$versionMinor"
+    else
+        "$versionMajor.$versionMinor.$versionPatch"
 }

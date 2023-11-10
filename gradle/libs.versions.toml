@@ -26,8 +26,14 @@ ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview
 ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 material3 = { group = "androidx.compose.material3", name = "material3" }
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version = "32.5.0" }
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
+firebase-analytics-ktx = { group = "com.google.firebase", name = "firebase-analytics-ktx" }
+google-play-app-update = { group = "com.google.android.play", name = "app-update", version = "2.0.1" }
+google-play-app-update-ktx = { group = "com.google.android.play", name = "app-update-ktx", version = "2.0.1" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+googleServices = { id = "com.google.gms.google-services", version = "4.4.0" }
 
